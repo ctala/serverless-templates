@@ -1,0 +1,150 @@
+service:
+  name: serverless-todo-app
+
+plugins:
+  - serverless-webpack
+  - serverless-iam-roles-per-function
+  - serverless-dynamodb-local
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-west-2'}
+
+  #Tracing allows us more detailed information through XRay
+  tracing:
+    lambda: true
+    apiGateway: true
+
+  # Environmental variables to be used on the functions.
+  environment:
+    TODOS_TABLE: ${self:custom.dynamoTableTodos}
+    BUCKET_NAME: ${self:custom.bucketName}
+
+
+package:
+  individually: true #That way we don't overload the smaller functions.
+
+functions:
+  Auth:
+    handler: src/lambda/auth/rs256Auth0Authorizer.handler
+    iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - secretsmanager:GetSecretValue
+      Resource: arn:aws:secretsmanager:us-west-2:938515849324:secret:dev/cert/auth0-MvMzd2
+
+  GetTodos:
+    handler: src/lambda/http/getTodos.handler
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamoTableTodos}/index/userId-timestamp-index
+    events:
+      - http:
+          method: get
+          authorizer: Auth
+          path: todos
+          cors: true
+
+
+  CreateTodo:
+    handler: src/lambda/http/createTodo.handler
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamoTableTodos}
+    events:
+      - http:
+          method: post
+          path: todos
+          authorizer: Auth
+          cors: true
+          request:
+            passThrough: NEVER #If it is not JSON, we don't accept it.
+            schema:
+              application/json: ${file(schemas/create.json)} #Validará en BODY en caso de no corresponder dará error 422 con mensaje
+
+  UpdateTodo:
+    handler: src/lambda/http/updateTodo.handler
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamoTableTodos}
+    events:
+      - http:
+          method: patch
+          path: todos/{todoId}
+          authorizer: Auth
+          cors: true
+          request:
+            passThrough: NEVER #If it is not JSON, we don't accept it.
+            schema:
+              application/json: ${file(schemas/update.json)} #Validará en BODY en caso de no corresponder dará error 422 con mensaje
+
+  DeleteTodo:
+    handler: src/lambda/http/deleteTodo.handler
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:DeleteItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamoTableTodos}
+    events:
+      - http:
+          method: delete
+          path: todos/{todoId}
+          authorizer: Auth
+          cors: true
+
+
+  GenerateUploadUrl:
+    handler: src/lambda/http/generateUploadUrl.handler
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.dynamoTableTodos}
+
+      - Effect: Allow
+        Action:
+          - S3:PutObject
+          - S3:GetObject
+        Resource: arn:aws:s3:::${self:custom.bucketName}/*
+    events:
+      - http:
+          method: post
+          path: todos/{todoId}/attachment
+          authorizer: Auth
+          cors: true
+
+resources:
+  - ${file(resources/dynamodb-todos.yml)}
+  - ${file(resources/s3-bucket.yml)}
+  - ${file(resources/request-validator.yml)}
+
+custom:
+
+# Databases
+## Dynamodb
+### Default
+  dynamoDBDeletePolicies:
+    prod: Retain
+    dev: Delete
+    local: Delete
+    other: Delete
+  dynamodb:
+    start:
+      migrate: true
+    stages:
+      - dev
+### Names
+  dynamoTableTodos : Todos-${self:provider.stage}
+
+
+  #S3
+  bucketName: ctala-udagram-${self:provider.stage}
