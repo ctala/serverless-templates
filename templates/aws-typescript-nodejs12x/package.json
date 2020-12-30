@@ -1,7 +1,7 @@
 {
-  "name": "serverless-todo-app",
+  "name": "aws-typescript-nodejs12x",
   "version": "1.0.0",
-  "description": "Serverless TODO image app",
+  "description": "aws-typescript-nodejs12x",
   "dependencies": {
     "@middy/core": "^1.5.0",
     "@middy/secrets-manager": "^1.5.0",
@@ -31,6 +31,6 @@
     "typescript": "^3.4.1",
     "webpack": "^4.29.6"
   },
-  "author": "Cristian Tala.",
+  "author": "Cristian Tala Sánchez.",
   "license": "MIT"
 }
