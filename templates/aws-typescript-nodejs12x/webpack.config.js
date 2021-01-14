@@ -22,4 +22,12 @@ module.exports = {
       { test: /\.tsx?$/, loader: 'ts-loader' },
     ],
   },
+  plugins: [
+    new ForkTsCheckerWebpackPlugin({
+      eslint: true,
+      eslintOptions: {
+        cache: true,
+      },
+    }),
+  ],
 };

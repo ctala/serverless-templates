@@ -1,10 +1,10 @@
-import { CreateTodoRequest } from '../requests/CreateTodoRequest'
-import * as uuid from 'uuid'
+import { CreateTodoRequest } from '../requests/CreateTodoRequest';
+import * as uuid from 'uuid';
 //Logger
-import { createLogger } from '../utils/logger'
-import { TodoDataLayer } from '../dataLayer/TodoDataLayer'
-import { TodoItem } from '../models/TodoItem'
-import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
+import { createLogger } from '../utils/logger';
+import { TodoDataLayer } from '../dataLayer/TodoDataLayer';
+import { TodoItem } from '../models/TodoItem';
+import { UpdateTodoRequest } from '../requests/UpdateTodoRequest';
 const logger = createLogger('TodoBL');
 
 export class TodoBL {
@@ -14,18 +14,14 @@ export class TodoBL {
   constructor(userId: string) {
     this.userId = userId;
     this.todoDataLayer = new TodoDataLayer(userId);
-
   }
-
 
   /**
    * Returns all the todos for a particular user.
    */
-  async getTodos(): Promise<TodoItem[]>
-  {
+  async getTodos(): Promise<TodoItem[]> {
     return this.todoDataLayer.getAllTodos();
   }
-
 
   /**
    * Creates a new todoitem.
@@ -47,37 +43,32 @@ export class TodoBL {
       timestamp: createdAtTimestamp,
       createdAt,
       updatedAt,
-      ...newTodo
-    }
+      ...newTodo,
+    };
 
-    return new Promise<TodoItem>((resolve,reject)=>{
-        this.todoDataLayer.create(newItem).then(resultedItem => {
+    return new Promise<TodoItem>((resolve, reject) => {
+      this.todoDataLayer
+        .create(newItem)
+        .then((resultedItem) => {
           logger.info(resultedItem);
           resolve(resultedItem);
-        }).catch(err=>{
+        })
+        .catch((err) => {
           logger.info(err);
           reject(err);
         });
-      }
-    )
-
-
+    });
   }
 
-  async updateTodo(todoId:string, updatedTodo: UpdateTodoRequest): Promise<void>
-  {
-    return this.todoDataLayer.update(todoId,updatedTodo);
+  async updateTodo(todoId: string, updatedTodo: UpdateTodoRequest): Promise<void> {
+    return this.todoDataLayer.update(todoId, updatedTodo);
   }
-
 
   /**+
    * Deletes a todoItem from the database for a particular user.
    * @param todoId
    */
-  async deleteTodo(todoId:string)
-  {
+  async deleteTodo(todoId: string) {
     return this.todoDataLayer.delete(todoId);
-
   }
-
 }

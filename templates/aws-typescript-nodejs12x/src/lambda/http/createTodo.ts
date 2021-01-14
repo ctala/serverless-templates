@@ -1,14 +1,13 @@
 //Imports
-import { getUser } from '../../utils/user'
-import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
-import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
-import { TodoBL } from '../../businessLogic/TodoBL'
-
+import { getUser } from '../../utils/user';
+import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda';
+import { CreateTodoRequest } from '../../requests/CreateTodoRequest';
+import { TodoBL } from '../../businessLogic/TodoBL';
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  const newTodo: CreateTodoRequest = JSON.parse(event.body)
-  const authorization: string = event.headers.Authorization
-  const userId: string = getUser(authorization)
+  const newTodo: CreateTodoRequest = JSON.parse(event.body);
+  const authorization: string = event.headers.Authorization;
+  const userId: string = getUser(authorization);
 
   const todoBL = new TodoBL(userId);
 
@@ -18,17 +17,16 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
   try {
     returnBody = await todoBL.createTodo(newTodo);
-  }catch (e) {
-      statusCode = 500;
+  } catch (e) {
+    statusCode = 500;
   }
-
 
   return {
     statusCode: statusCode,
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Credentials': true
+      'Access-Control-Allow-Credentials': true,
     },
-    body: JSON.stringify({ item : returnBody })
-  }
-}
+    body: JSON.stringify({ item: returnBody }),
+  };
+};

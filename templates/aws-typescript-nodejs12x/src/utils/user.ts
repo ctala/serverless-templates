@@ -1,17 +1,14 @@
-import { parseUserId } from '../auth/utils'
-
+import { parseUserId } from '../auth/utils';
 
 /**
  * While we develope everything we use a default offline user to test CRUD Operations.
  * @param auth
  */
 export function getUser(auth: string) {
-  const split: any = auth.split(' ')
+  const split: any = auth.split(' ');
   if (split.length < 2) {
-    return 'offline-user'
+    return 'offline-user';
   } else {
-    return parseUserId(split[1])
-
+    return parseUserId(split[1]);
   }
-
 }

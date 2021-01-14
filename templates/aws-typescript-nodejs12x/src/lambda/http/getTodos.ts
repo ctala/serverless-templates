@@ -1,10 +1,9 @@
-import { getUser } from '../../utils/user'
-import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
-import { TodoBL } from '../../businessLogic/TodoBL'
+import { getUser } from '../../utils/user';
+import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda';
+import { TodoBL } from '../../businessLogic/TodoBL';
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-
-  console.log('Processing event: ', event)
+  console.log('Processing event: ', event);
   const authorization: string = event.headers.Authorization;
   const userId: string = getUser(authorization);
 
@@ -14,20 +13,17 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   let statusCode = 200;
   try {
     items = await todosBL.getTodos();
-  }
-  catch (e) {
+  } catch (e) {
     statusCode = 500;
   }
-
-
 
   return {
     statusCode: statusCode,
     headers: {
-      'Access-Control-Allow-Origin': '*'
+      'Access-Control-Allow-Origin': '*',
     },
     body: JSON.stringify({
-      items
-    })
-  }
-}
+      items,
+    }),
+  };
+};
