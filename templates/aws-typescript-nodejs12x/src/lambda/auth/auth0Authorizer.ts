@@ -53,6 +53,10 @@ export const handler = async (event: CustomAuthorizerEvent): Promise<CustomAutho
   }
 };
 
+/**
+ * @param  authHeader
+ * @example
+ */
 async function verifyToken(authHeader: string): Promise<JwtPayload> {
   const token = getToken(authHeader);
   const jwt: Jwt = decode(token, { complete: true }) as Jwt;
@@ -64,6 +68,10 @@ async function verifyToken(authHeader: string): Promise<JwtPayload> {
   return undefined;
 }
 
+/**
+ * @param  authHeader
+ * @example
+ */
 function getToken(authHeader: string): string {
   if (!authHeader) throw new Error('No authentication header');
 

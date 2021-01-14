@@ -2,6 +2,9 @@ import { getAWSClient } from './awsClient';
 
 const AWS = getAWSClient();
 
+/**
+ * @example
+ */
 export function getDocClient() {
   //If it is local we use the default SDK and a local DynamoDB
   if (process.env.IS_OFFLINE) {

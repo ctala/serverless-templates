@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /**
+ * @example
  * Creates the proper AWS Client depending if we are offline.
  */
 export function getAWSClient() {

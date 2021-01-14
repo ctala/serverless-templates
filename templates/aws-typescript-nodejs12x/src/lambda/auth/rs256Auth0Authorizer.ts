@@ -49,6 +49,11 @@ export const handler = middy(
   },
 );
 
+/**
+ * @param  authHeader
+ * @param certificate
+ * @example
+ */
 function verifyToken(authHeader: string, certificate: string): JwtToken {
   if (!authHeader) throw new Error('No authentication header');
 
@@ -61,8 +66,8 @@ function verifyToken(authHeader: string, certificate: string): JwtToken {
 }
 
 /**
-    The certificate is base64 encoded in Secret Manager
-   */
+    The certificate is base64 encoded in Secret Manager.
+ */
 handler.use(
   secretsManager({
     cache: true,
@@ -72,6 +77,10 @@ handler.use(
   }),
 );
 
+/**
+ * @param  data
+ * @example
+ */
 function decodeBase64(data: string) {
   const buff = new Buffer(data, 'base64');
   return buff.toString('ascii');

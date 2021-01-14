@@ -50,7 +50,9 @@ export class TodoDataLayer {
 
   /**
    * Creates a new TodoItem.
-   * @param newItem
+   *
+   * @param  newItem
+   * @example
    */
   async create(newItem: TodoItem): Promise<TodoItem> {
     const params = {
@@ -70,10 +72,12 @@ export class TodoDataLayer {
     });
   }
 
-  /**
+  /**.
    * Updates a todoItem
+   *
    * @param todoId
    * @param updatedTodo
+   * @example
    */
   async update(todoId: string, updatedTodo: UpdateTodoRequest): Promise<void> {
     //Related to time
@@ -117,9 +121,11 @@ export class TodoDataLayer {
     });
   }
 
-  /**
+  /**.
    * Deletes a todoItem for a particular User
+   *
    * @param todoId
+   * @example
    */
   async delete(todoId: string): Promise<void> {
     //If the user is not the creator of the todoitem, it can not be deleted

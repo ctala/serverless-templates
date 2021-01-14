@@ -17,6 +17,7 @@ export class TodoBL {
   }
 
   /**
+   * @example
    * Returns all the todos for a particular user.
    */
   async getTodos(): Promise<TodoItem[]> {
@@ -25,7 +26,9 @@ export class TodoBL {
 
   /**
    * Creates a new todoitem.
-   * @param newTodo
+   *
+   * @param  newTodo
+   * @example
    */
   async createTodo(newTodo: CreateTodoRequest) {
     const todoId = uuid.v4();
@@ -67,6 +70,7 @@ export class TodoBL {
   /**+
    * Deletes a todoItem from the database for a particular user.
    * @param todoId
+   * @example
    */
   async deleteTodo(todoId: string) {
     return this.todoDataLayer.delete(todoId);

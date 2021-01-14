@@ -1,5 +1,5 @@
 /**
- * A payload of a JWT token
+ * A payload of a JWT token.
  */
 export interface JwtPayload {
   iss: string;
